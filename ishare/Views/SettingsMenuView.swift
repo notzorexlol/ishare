@@ -40,6 +40,14 @@ struct SettingsMenuView: View {
 						}
 						.rotationEffect(aussieMode ? .degrees(180) : .zero)
 					}
+					NavigationLink(destination: CloudSettingsView()) {
+						Label {
+							Text("Cloud".localized())
+						} icon: {
+							Image(systemName: "cloud")
+						}
+						.rotationEffect(aussieMode ? .degrees(180) : .zero)
+					}
 					NavigationLink(destination: KeybindSettingsView()) {
 						Label {
 							Text("Keybinds".localized())
@@ -257,6 +265,7 @@ struct KeybindSettingsView: View {
 						KeyboardShortcuts.Recorder("Record GIF:".localized(), name: .recordGif)
                         KeyboardShortcuts.Recorder("Open most recent item:".localized(), name: .openMostRecentItem)
                         KeyboardShortcuts.Recorder("Upload from Pasteboard:".localized(), name: .uploadPasteBoardItem)
+                        KeyboardShortcuts.Recorder("OCR Text:".localized(), name: .ocrText)
 
 						Divider()
 							.padding(.vertical, 5)
@@ -306,6 +315,7 @@ struct CaptureSettingsView: View {
 	@Default(.capturePath) var capturePath
 	@Default(.captureFileType) var fileType
 	@Default(.captureFileName) var fileName
+	@Default(.annotateCapture) var annotateCapture
 	@Default(.aussieMode) var aussieMode
 
     var body: some View {
@@ -348,6 +358,11 @@ struct CaptureSettingsView: View {
 					}
 				}
 				.labelsHidden()
+			}
+
+			VStack(alignment: .leading, spacing: 10) {
+				Toggle("Annotate captures".localized(), isOn: $annotateCapture)
+					.help("Open the annotation editor after each screenshot".localized())
 			}
 		}
 		.padding(30)
@@ -528,6 +543,40 @@ struct AdvancedSettingsView: View {
             showingAlert = true
         }
     }
+}
+
+struct CloudSettingsView: View {
+	@Default(.ziplineServerURL) var ziplineServerURL
+	@Default(.ziplineAPIToken) var ziplineAPIToken
+	@Default(.aussieMode) var aussieMode
+
+	var body: some View {
+		VStack(alignment: .leading, spacing: 30) {
+			VStack(alignment: .leading, spacing: 15) {
+				Text("Zipline".localized()).font(.title3.bold())
+				Text(
+					"Upload captures directly to your own Zipline server. Set the server URL and API token below, then choose Zipline as your upload destination."
+						.localized())
+				.font(.caption)
+				.foregroundColor(.secondary)
+			}
+
+			VStack(alignment: .leading, spacing: 15) {
+				Text("Server URL:".localized()).font(.headline)
+				TextField(String(), text: $ziplineServerURL)
+					.textFieldStyle(.roundedBorder)
+					.help("e.g. https://files.example.com".localized())
+			}
+
+			VStack(alignment: .leading, spacing: 15) {
+				Text("API Token:".localized()).font(.headline)
+				SecureField(String(), text: $ziplineAPIToken)
+					.textFieldStyle(.roundedBorder)
+			}
+		}
+		.padding(30)
+		.rotationEffect(aussieMode ? .degrees(180) : .zero)
+	}
 }
 
 #Preview {

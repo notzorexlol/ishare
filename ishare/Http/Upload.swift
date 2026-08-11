@@ -9,7 +9,7 @@ import Defaults
 import Foundation
 
 enum UploadType: String, CaseIterable, Identifiable, Codable, Defaults.Serializable {
-    case IMGUR, CUSTOM
+    case IMGUR, ZIPLINE, CUSTOM
 
     var id: Self { self }
 }
@@ -20,6 +20,8 @@ enum UploadType: String, CaseIterable, Identifiable, Codable, Defaults.Serializa
     switch uploadType {
     case .IMGUR:
         imgurUpload(fileURL, completion: completion)
+    case .ZIPLINE:
+        ziplineUpload(fileURL, completion: completion)
     case .CUSTOM:
         guard let specification = CustomUploader.allCases.first(where: { $0.id == activeUploader }) else {
             print("Custom uploader specification not found")

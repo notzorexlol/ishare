@@ -29,6 +29,7 @@ struct MainMenuView: View {
 	@Default(.uploadDestination) var uploadDestination
 	@Default(.builtInShare) var builtInShare
 	@Default(.uploadHistory) var uploadHistory
+	@Default(.annotateCapture) var annotateCapture
 
 	var body: some View {
 		VStack {
@@ -67,6 +68,13 @@ struct MainMenuView: View {
 				Image(systemName: "photo.on.rectangle.angled")
 				Text("Capture".localized())
 			}
+
+			Toggle(isOn: $annotateCapture) {
+				Image(systemName: "pencil.tip.crop.circle")
+				Text("Annotate Capture".localized())
+			}
+			.toggleStyle(.checkbox)
+			.help("Open the annotation editor after each capture".localized())
 
 			Button {
 				recordScreen()
@@ -165,11 +173,11 @@ struct MainMenuView: View {
 				Text("Upload Destination".localized())
 			}
 			.onChange(of: uploadDestination) {
-				if case .builtIn = uploadDestination {
+				if case let .builtIn(builtInUploadType) = uploadDestination {
 					activeCustomUploader = nil
-					uploadType = .IMGUR
+					uploadType = builtInUploadType
 					BezelNotification.show(
-						messageText: "Selected \(uploadType.rawValue.capitalized)".localized(),
+						messageText: "Selected \(builtInUploadType.rawValue.capitalized)".localized(),
 						icon: ToastIcon)
 				} else if case let .custom(customUploader) = uploadDestination {
 					activeCustomUploader = customUploader

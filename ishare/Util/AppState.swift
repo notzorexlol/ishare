@@ -109,6 +109,13 @@ final class AppState: ObservableObject {
 			}
 		}
 
+		KeyboardShortcuts.onKeyUp(for: .ocrText) {
+			NSLog("OCR text shortcut triggered")
+			Task { @MainActor in
+				await performOCRFromScreen()
+			}
+		}
+
 		// Force upload shortcuts
 		KeyboardShortcuts.onKeyUp(for: .captureRegionForceUpload) {
 			NSLog("Force upload capture region shortcut triggered")

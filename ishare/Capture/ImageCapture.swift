@@ -28,15 +28,15 @@ enum FileType: String, CaseIterable, Identifiable, Defaults.Serializable {
 func captureScreen(type: CaptureType, display: Int = 1) async {
     NSLog("Starting screen capture with type: %@, display: %d", type.rawValue, display)
 
+    if Defaults[.annotateCapture] {
+        await captureScreenWithAnnotation(type: type, display: display)
+        return
+    }
+
     let capturePath = Defaults[.capturePath]
     let fileType = Defaults[.captureFileType]
     let fileName = Defaults[.captureFileName]
-    let copyToClipboard = Defaults[.copyToClipboard]
-    let openInFinder = Defaults[.openInFinder]
-    let uploadMedia = Defaults[.uploadMedia]
     let captureBinary = Defaults[.captureBinary]
-    let uploadType = Defaults[.uploadType]
-    let saveToDisk = Defaults[.saveToDisk]
 
     let suffix = await getCaptureNameSuffix(type: type, display: display)
 
@@ -61,6 +61,19 @@ func captureScreen(type: CaptureType, display: Int = 1) async {
         return
     }
     NSLog("Screen capture completed successfully")
+
+    postCaptureTasks(fileURL: fileURL)
+}
+
+/// Runs the shared post-capture pipeline: copy to clipboard, reveal in
+/// Finder, upload if requested, toast, and share sheet.
+@MainActor
+func postCaptureTasks(fileURL: URL) {
+    let copyToClipboard = Defaults[.copyToClipboard]
+    let openInFinder = Defaults[.openInFinder]
+    let uploadMedia = Defaults[.uploadMedia]
+    let uploadType = Defaults[.uploadType]
+    let saveToDisk = Defaults[.saveToDisk]
 
     if copyToClipboard {
         let pasteboard = NSPasteboard.general
@@ -115,7 +128,7 @@ func captureScreen(type: CaptureType, display: Int = 1) async {
 }
 
 @MainActor
-private func getCaptureNameSuffix(type: CaptureType, display: Int) async -> String {
+func getCaptureNameSuffix(type: CaptureType, display: Int) async -> String {
     switch type {
     case .WINDOW:
         if let frontmostApp = NSWorkspace.shared.frontmostApplication {

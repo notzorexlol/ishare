@@ -28,6 +28,7 @@ extension KeyboardShortcuts.Name {
     
     static let openMostRecentItem = Self("openMostRecentItem", default: .init(.o, modifiers: [.control, .option]))
     static let uploadPasteBoardItem = Self("uploadPasteBoardItem", default: .init(.u, modifiers: [.control, .option]))
+    static let ocrText = Self("ocrText", default: .init(.e, modifiers: [.control, .option, .shift]))
 
 
     // Force upload variants
@@ -64,6 +65,9 @@ extension Defaults.Keys {
     static let recordPointer = Key<Bool>("recordPointer", default: true, iCloud: true)
     static let recordClicks = Key<Bool>("recordClicks", default: false, iCloud: true)
     static let builtInShare = Key<SharingPreferences>("builtInShare", default: .init(), iCloud: true)
+    static let annotateCapture = Key<Bool>("annotateCapture", default: true, iCloud: true)
+    static let ziplineServerURL = Key<String>("ziplineServerURL", default: "", iCloud: false)
+    static let ziplineAPIToken = Key<String>("ziplineAPIToken", default: "", iCloud: false)
     static let toastTimeout = Key<Double>("toastTimeout", default: 2, iCloud: true)
     static let menuBarIcon = Key<MenuBarIcon>("menuBarIcon", default: .DEFAULT, iCloud: true)
     static let uploadHistory = Key<[HistoryItem]>("uploadHistory", default: [], iCloud: true)
